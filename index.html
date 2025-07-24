@@ -1,119 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>YouTube Karaoke Search🎤</title>
+  <title>Karaoke YouTube Search</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f2f2f2;
+      background: #f7f7f7;
     }
-
     header {
-      background: #111;
+      background-color: #222;
       color: white;
-      padding: 1rem;
+      padding: 15px;
       text-align: center;
     }
-
-    #search-form {
-      display: flex;
-      justify-content: center;
-      margin: 1rem;
-    }
-
-    #search-input {
-      width: 60%;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    #results {
-      max-height: 300px;
-      overflow-y: auto;
-      padding: 1rem;
-      background: white;
-      margin: auto;
-      max-width: 800px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .video-item {
-      cursor: pointer;
-      padding: 0.5rem;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .video-item:hover {
-      background: #eee;
-    }
-
-    .video-wrapper {
-      position: relative;
-      padding-top: 56.25%; /* 16:9 ratio */
-      height: 0;
-      overflow: hidden;
-      max-width: 800px;
-      margin: 2rem auto;
-      background: black;
-    }
-
-    .video-wrapper iframe {
-      position: absolute;
+    .search-bar {
+      padding: 10px;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
       top: 0;
-      left: 0;
+      z-index: 10;
+    }
+    #searchInput {
+      width: 300px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    #player {
+      text-align: center;
+      padding: 20px;
+      background: #111;
+    }
+    iframe {
       width: 100%;
-      height: 100%;
+      max-width: 800px;
+      height: 450px;
       border: none;
+    }
+    #results {
+      height: calc(100vh - 600px);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .video-item {
+      width: 300px;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .video-item:hover {
+      transform: scale(1.03);
+    }
+    .video-item img {
+      width: 100%;
+      border-radius: 6px;
+    }
+    .video-item p {
+      font-size: 14px;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>YouTube Karaoke Search</h1>
+  <h1>Karaoke YouTube Search 🎤</h1>
 </header>
 
-<form id="search-form">
-  <input type="text" id="search-input" placeholder="Search for karaoke..." />
-</form>
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search for karaoke songs...">
+  <button onclick="searchYouTube()">Search</button>
+</div>
 
-<div class="video-wrapper">
+<div id="player">
   <iframe id="ytplayer" src="" allowfullscreen></iframe>
 </div>
 
 <div id="results"></div>
 
 <script>
-  const apiKey = "AIzaSyCT5uYssh2bfXO_mOIMTwDVoQ0r5mxsstU"; // <-- Replace this!
-  const searchForm = document.getElementById("search-form");
-  const searchInput = document.getElementById("search-input");
-  const resultsDiv = document.getElementById("results");
-  const ytPlayer = document.getElementById("ytplayer");
+  const API_KEY = 'AIzaSyCT5uYssh2bfXO_mOIMTwDVoQ0r5mxsstU'; // Replace this!
 
-  searchForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const query = searchInput.value + " karaoke";
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(query)}&key=${apiKey}`);
-    const data = await response.json();
+  function searchYouTube() {
+    const query = document.getElementById('searchInput').value + " karaoke";
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = "Loading...";
 
-    resultsDiv.innerHTML = "";
-    data.items.forEach(item => {
-      const videoId = item.id.videoId;
-      const title = item.snippet.title;
-      const div = document.createElement("div");
-      div.className = "video-item";
-      div.textContent = title;
-      div.addEventListener("click", () => {
-        ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(query)}&key=${API_KEY}`)
+      .then(response => response.json())
+      .then(data => {
+        resultsDiv.innerHTML = "";
+        data.items.forEach(item => {
+          const videoId = item.id.videoId;
+          const title = item.snippet.title;
+          const thumbnail = item.snippet.thumbnails.medium.url;
+
+          const videoDiv = document.createElement("div");
+          videoDiv.className = "video-item";
+          videoDiv.innerHTML = `
+            <img src="${thumbnail}" onclick="loadVideo('${videoId}')">
+            <p>${title}</p>
+          `;
+          resultsDiv.appendChild(videoDiv);
+        });
       });
-      resultsDiv.appendChild(div);
-    });
-  });
+  }
+
+  function loadVideo(videoId) {
+    const iframe = document.getElementById("ytplayer");
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  }
 </script>
 
 </body>
