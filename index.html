@@ -3,9 +3,7 @@
 <head>
   <title>Karaoke YouTube Search</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -26,17 +24,11 @@
       justify-content: center;
       transition: opacity 1s ease-out;
     }
-
-    #splashVideoWrapper {
-      width: 100%;
-      height: 100%;
-    }
-
     #splash iframe {
       width: 100%;
       height: 100%;
+      border: none;
     }
-
     #splash.fade-out {
       opacity: 0;
       pointer-events: none;
@@ -135,17 +127,12 @@
 </head>
 <body>
 
-<!-- Splash screen with YouTube video -->
+<!-- Splash screen using Google Drive -->
 <div id="splash">
-  <div id="splashVideoWrapper">
-    <iframe
-      id="splashVideo"
-      src="https://www.youtube.com/embed/lpoFsrntFE4?autoplay=1&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1"
-      frameborder="0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-  </div>
+  <iframe 
+    src="https://drive.google.com/file/d/10-2xxmla5gY6fwUV-miQQV618LOKkZbE/preview?autoplay=1"
+    allow="autoplay">
+  </iframe>
 </div>
 
 <header>
@@ -172,9 +159,8 @@
   </div>
 </div>
 
-<!-- YouTube Data API Script -->
 <script>
-  const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual YouTube API key
+  const API_KEY = 'AIzaSyCT5uYssh2bfXO_mOIMTwDVoQ0r5mxsstU'; // Replace with your actual YouTube API key
 
   function searchYouTube() {
     const query = document.getElementById('searchInput').value + " karaoke";
@@ -205,43 +191,13 @@
     const iframe = document.getElementById("ytplayer");
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0`;
   }
-</script>
 
-<!-- Load YouTube IFrame API for splash -->
-<script>
-  let tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.body.appendChild(tag);
-
-  let player;
-
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('splashVideo', {
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      }
-    });
-  }
-
-  function onPlayerReady(event) {
-    event.target.playVideo();
-  }
-
-  function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.ENDED) {
-      hideSplash();
-    }
-  }
-
-  function hideSplash() {
-    const splash = document.getElementById('splash');
-    splash.classList.add('fade-out');
-    setTimeout(() => splash.style.display = 'none', 1000);
-  }
-
-  // Safety timeout (e.g. if user skips video or network is slow)
-  setTimeout(hideSplash, 15000);
+  // Splash timeout fade
+  setTimeout(() => {
+    const splash = document.getElementById("splash");
+    splash.classList.add("fade-out");
+    setTimeout(() => splash.style.display = "none", 1000);
+  }, 15000); // 15 seconds splash
 </script>
 
 </body>
