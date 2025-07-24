@@ -12,6 +12,36 @@
       background-color: #f7f7f7;
     }
 
+    /* Splash styles */
+    #splash {
+      position: fixed;
+      z-index: 9999;
+      background: #000;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease-out;
+    }
+
+    #splashVideoWrapper {
+      width: 100%;
+      height: 100%;
+    }
+
+    #splash iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    #splash.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     header {
       background-color: #222;
       color: white;
@@ -93,32 +123,9 @@
       margin-top: 8px;
     }
 
-    #splash {
-      position: fixed;
-      z-index: 9999;
-      background: #111;
-      color: #fff;
-      font-size: 3em;
-      font-weight: bold;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 100vw;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 1s ease-out;
-    }
-
-    #splash.fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
-        height: auto;
       }
       .results {
         max-height: 280px;
@@ -128,9 +135,17 @@
 </head>
 <body>
 
-<!-- 🔥 Splash Screen -->
+<!-- Splash screen with YouTube video -->
 <div id="splash">
-  <h1>KANTA BISDAK 🎶</h1>
+  <div id="splashVideoWrapper">
+    <iframe
+      id="splashVideo"
+      src="https://www.youtube.com/embed/lpoFsrntFE4?autoplay=1&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
 </div>
 
 <header>
@@ -144,15 +159,12 @@
 
 <div class="main-container">
   <div class="player-area">
- <iframe 
-  id="ytplayer"
-  width="100%" 
-  height="450"
-  src="https://www.youtube.com/embed/lpoFsrntFE4?autoplay=1&modestbranding=1&rel=0"
-  allow="autoplay; encrypted-media"
-  allowfullscreen>
-</iframe>
-
+    <iframe 
+      id="ytplayer" 
+      src="https://www.youtube.com/embed/lpoFsrntFE4?autoplay=1&modestbranding=1&rel=0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
   </div>
 
   <div id="results" class="results">
@@ -160,8 +172,9 @@
   </div>
 </div>
 
+<!-- YouTube Data API Script -->
 <script>
-  const API_KEY = 'AIzaSyCT5uYssh2bfXO_mOIMTwDVoQ0r5mxsstU'; // Replace with your actual YouTube API Key
+  const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual YouTube API key
 
   function searchYouTube() {
     const query = document.getElementById('searchInput').value + " karaoke";
@@ -190,16 +203,45 @@
 
   function loadVideo(videoId) {
     const iframe = document.getElementById("ytplayer");
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0`;
+  }
+</script>
+
+<!-- Load YouTube IFrame API for splash -->
+<script>
+  let tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+
+  let player;
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('splashVideo', {
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
   }
 
-  // Splash screen fade-out
-  window.addEventListener('load', () => {
+  function onPlayerReady(event) {
+    event.target.playVideo();
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+      hideSplash();
+    }
+  }
+
+  function hideSplash() {
     const splash = document.getElementById('splash');
-    setTimeout(() => {
-      splash.classList.add('fade-out');
-    }, 2000);
-  });
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.style.display = 'none', 1000);
+  }
+
+  // Safety timeout (e.g. if user skips video or network is slow)
+  setTimeout(hideSplash, 15000);
 </script>
 
 </body>
