@@ -1,44 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Karaoke YouTube Search</title>
+  <title>KANTA BISDAK Karaoke</title>
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background-color: #f7f7f7;
     }
 
-    /* Splash styles */
+    /* SPLASH SCREEN */
     #splash {
       position: fixed;
-      z-index: 9999;
-      background: #000;
       top: 0;
       left: 0;
       height: 100vh;
       width: 100vw;
+      background: #000;
+      z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: opacity 1s ease-out;
     }
-    #splash iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+
     #splash.fade-out {
       opacity: 0;
       pointer-events: none;
     }
 
+    #splash iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
     header {
-      background-color: #222;
-      color: white;
-      padding: 15px;
+      background: #222;
+      color: #fff;
       text-align: center;
+      padding: 15px;
     }
 
     .search-bar {
@@ -92,11 +93,11 @@
     }
 
     .video-item {
-      background: white;
       margin-bottom: 15px;
       padding: 10px;
       border-radius: 10px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      background: white;
       cursor: pointer;
       transition: transform 0.2s;
     }
@@ -127,7 +128,7 @@
 </head>
 <body>
 
-<!-- Splash screen using Google Drive -->
+<!-- Splash with Google Drive video -->
 <div id="splash">
   <iframe 
     src="https://drive.google.com/file/d/10-2xxmla5gY6fwUV-miQQV618LOKkZbE/preview?autoplay=1"
@@ -136,7 +137,7 @@
 </div>
 
 <header>
-  <h1>Karaoke YouTube Search 🎤</h1>
+  <h1>KANTA BISDAK Karaoke 🎤</h1>
 </header>
 
 <div class="search-bar">
@@ -147,7 +148,7 @@
 <div class="main-container">
   <div class="player-area">
     <iframe 
-      id="ytplayer" 
+      id="ytplayer"
       src="https://www.youtube.com/embed/lpoFsrntFE4?autoplay=1&modestbranding=1&rel=0"
       allow="autoplay; encrypted-media"
       allowfullscreen>
@@ -160,7 +161,7 @@
 </div>
 
 <script>
-  const API_KEY = 'AIzaSyCT5uYssh2bfXO_mOIMTwDVoQ0r5mxsstU'; // Replace with your actual YouTube API key
+  const API_KEY = 'AIzaSyCT5uYssh2bfXO_mOIMTwDVoQ0r5mxsstU'; // Replace this
 
   function searchYouTube() {
     const query = document.getElementById('searchInput').value + " karaoke";
@@ -168,7 +169,7 @@
     resultsDiv.innerHTML = "Loading...";
 
     fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(query)}&key=${API_KEY}`)
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
         resultsDiv.innerHTML = "";
         data.items.forEach(item => {
@@ -192,12 +193,12 @@
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0`;
   }
 
-  // Splash timeout fade
+  // Fade out splash screen after 15s
   setTimeout(() => {
     const splash = document.getElementById("splash");
     splash.classList.add("fade-out");
     setTimeout(() => splash.style.display = "none", 1000);
-  }, 15000); // 15 seconds splash
+  }, 15000);
 </script>
 
 </body>
