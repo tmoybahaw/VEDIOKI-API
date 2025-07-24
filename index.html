@@ -97,17 +97,44 @@
       .main-container {
         flex-direction: column;
       }
+#splash {
+  position: fixed;
+  z-index: 9999;
+  background: #111;
+  color: #fff;
+  font-size: 3em;
+  font-weight: bold;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease-out;
+}
+#splash.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
       .results {
-        max-height: 300px;
+        max-height: 280px;
       }
     }
   </style>
 </head>
 <body>
 
+<!-- 🔥 Splash Screen -->
+<div id="splash">
+  <h1>KANTA BISDAK 🎶</h1>
+</div>
+
 <header>
   <h1>Karaoke YouTube Search 🎤</h1>
 </header>
+
 
 <div class="search-bar">
   <input type="text" id="searchInput" placeholder="Search for karaoke songs...">
@@ -162,6 +189,15 @@
     const iframe = document.getElementById("ytplayer");
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
   }
+</script>
+<script>
+  // Splash screen fade-out
+  window.addEventListener('load', () => {
+    const splash = document.getElementById('splash');
+    setTimeout(() => {
+      splash.classList.add('fade-out');
+    }, 2000);
+  });
 </script>
 
 </body>
